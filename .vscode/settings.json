@@ -1,0 +1,53 @@
+{
+  "mochaExplorer.files": "test/**/*.ts",
+  "mochaExplorer.require": "ts-node/register",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "cSpell.language": "en-GB",
+  "cSpell.words": [
+    "apigatewayv",
+    "Chainable",
+    "esbuild",
+    "exts",
+    "hotswap",
+    "istanbuljs",
+    "Millis",
+    "nanoid",
+    "outfile",
+    "plusplus",
+    "resourcegroupstaggingapi",
+    "Runtimes",
+    "stepfunctions",
+    "TRes",
+    "vars"
+  ],
+  "serverlessConsole.services": [
+    {
+      "type": "cloudformation",
+      "title": "Application Stack",
+      "timeOffsetInMs": 0,
+      "awsProfile": "default",
+      "stacks": [
+        {
+          "region": "eu-west-2",
+          "stackName": "ApplicationStack",
+          "stage": "dev"
+        }
+      ]
+    },
+    {
+      "type": "cloudformation",
+      "title": "Data Storage Stack",
+      "timeOffsetInMs": 0,
+      "awsProfile": "default",
+      "stacks": [
+        {
+          "region": "eu-west-2",
+          "stackName": "DataStorageStack",
+          "stage": "dev"
+        }
+      ]
+    }
+  ]
+}
