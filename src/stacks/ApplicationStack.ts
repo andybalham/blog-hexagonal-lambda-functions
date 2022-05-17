@@ -7,14 +7,11 @@ import * as ssm from '@aws-cdk/aws-ssm';
 import CustomerUpdatedHandler from '../application/CustomerUpdatedHandler';
 import { AccountDetailTable, CustomerTable } from '../data-storage';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ApplicationStackProps {
-  // TODO 08Apr22: Do we need to pass anything in here?
-}
+export type ApplicationStackProps = cdk.StackProps
 
 export default class ApplicationStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: ApplicationStackProps) {
-    super(scope, id);
+  constructor(scope: cdk.Construct, id: string, props?: ApplicationStackProps) {
+    super(scope, id, props);
 
     const customerUpdatedTopic = new sns.Topic(this, 'CustomerUpdatedTopic');
 

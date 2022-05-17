@@ -22,32 +22,5 @@
     "TRes",
     "vars"
   ],
-  "serverlessConsole.services": [
-    {
-      "type": "cloudformation",
-      "title": "Application Stack",
-      "timeOffsetInMs": 0,
-      "awsProfile": "default",
-      "stacks": [
-        {
-          "region": "eu-west-2",
-          "stackName": "ApplicationStack",
-          "stage": "dev"
-        }
-      ]
-    },
-    {
-      "type": "cloudformation",
-      "title": "Data Storage Stack",
-      "timeOffsetInMs": 0,
-      "awsProfile": "default",
-      "stacks": [
-        {
-          "region": "eu-west-2",
-          "stackName": "DataStorageStack",
-          "stage": "dev"
-        }
-      ]
-    }
-  ]
+  "serverlessConsole.services": []
 }
