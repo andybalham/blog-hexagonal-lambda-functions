@@ -1,35 +1,35 @@
 /* eslint-disable no-new */
-/* eslint-disable import/no-extraneous-dependencies */
-import * as cdk from '@aws-cdk/core';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
-import * as ssm from '@aws-cdk/aws-ssm';
+import { RemovalPolicy } from 'aws-cdk-lib';
+import { AttributeType, BillingMode, ITable, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { ParameterTier, ParameterType, StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { Construct } from 'constructs';
 
 export interface AccountDetailTableProps {
   isTestResource?: boolean;
 }
 
-export default class AccountDetailTable extends cdk.Construct {
+export default class AccountDetailTable extends Construct {
   //
   static readonly TABLE_NAME_SSM_PARAMETER = '/data-storage/account-detail-table-name';
 
-  readonly table: dynamodb.Table;
+  readonly table: ITable;
 
-  constructor(scope: cdk.Construct, id: string, props?: AccountDetailTableProps) {
+  constructor(scope: Construct, id: string, props?: AccountDetailTableProps) {
     super(scope, id);
 
-    this.table = new dynamodb.Table(this, 'AccountDetailTable', {
-      partitionKey: { name: 'accountDetailId', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: props?.isTestResource ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
+    this.table = new Table(this, 'AccountDetailTable', {
+      partitionKey: { name: 'accountDetailId', type: AttributeType.STRING },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: props?.isTestResource ? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN,
     });
 
     if (!props?.isTestResource) {
-      new ssm.StringParameter(this, 'AccountDetailTableNameSsmParameter', {
+      new StringParameter(this, 'AccountDetailTableNameSsmParameter', {
         parameterName: AccountDetailTable.TABLE_NAME_SSM_PARAMETER,
         stringValue: this.table.tableName,
         description: 'The name of the Account Detail table',
-        type: ssm.ParameterType.STRING,
-        tier: ssm.ParameterTier.STANDARD,
+        type: ParameterType.STRING,
+        tier: ParameterTier.STANDARD,
       });
     }
   }

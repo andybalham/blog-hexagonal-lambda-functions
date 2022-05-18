@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-new */
-/* eslint-disable import/no-extraneous-dependencies */
-import * as cdk from '@aws-cdk/core';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { CustomerTable, AccountDetailTable } from '../data-storage';
 
-export type DataStorageStackProps = cdk.StackProps
+export type DataStorageStackProps = StackProps
 
-export default class DataStorageStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: DataStorageStackProps) {
+export default class DataStorageStack extends Stack {
+  constructor(scope: Construct, id: string, props?: DataStorageStackProps) {
     super(scope, id, props);
 
     new CustomerTable(this, 'CustomerTable');

@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-new */
-/* eslint-disable import/no-extraneous-dependencies */
-import * as cdk from '@aws-cdk/core';
-import * as sns from '@aws-cdk/aws-sns';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { Construct } from 'constructs';
 import CustomerUpdatedHandler from '../application/CustomerUpdatedHandler';
 import { AccountDetailTable, CustomerTable } from '../data-storage';
 
-export type TestStackProps = cdk.StackProps;
+export type TestStackProps = StackProps;
 
-export default class TestStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: TestStackProps) {
+export default class TestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: TestStackProps) {
     super(scope, id, props);
 
-    const customerUpdatedTopic = new sns.Topic(this, 'CustomerUpdatedTopic');
+    const customerUpdatedTopic = new Topic(this, 'CustomerUpdatedTopic');
 
     const customerTable = new CustomerTable(this, 'CustomerTable', {
       isTestResource: true,

@@ -1,35 +1,36 @@
 /* eslint-disable no-new */
 /* eslint-disable import/no-extraneous-dependencies */
-import * as cdk from '@aws-cdk/core';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
-import * as ssm from '@aws-cdk/aws-ssm';
+import { RemovalPolicy } from 'aws-cdk-lib';
+import { AttributeType, BillingMode, ITable, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { ParameterTier, ParameterType, StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { Construct } from 'constructs';
 
 export interface CustomerTableProps {
   isTestResource?: boolean;
 }
 
-export default class CustomerTable extends cdk.Construct {
+export default class CustomerTable extends Construct {
   //
   static readonly TABLE_NAME_SSM_PARAMETER = '/data-storage/customer-table-name';
 
-  table: dynamodb.Table;
+  table: ITable;
 
-  constructor(scope: cdk.Construct, id: string, props?: CustomerTableProps) {
+  constructor(scope: Construct, id: string, props?: CustomerTableProps) {
     super(scope, id);
 
-    this.table = new dynamodb.Table(this, 'CustomerTable', {
-      partitionKey: { name: 'customerId', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: props?.isTestResource ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
+    this.table = new Table(this, 'CustomerTable', {
+      partitionKey: { name: 'customerId', type: AttributeType.STRING },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: props?.isTestResource ? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN,
     });
 
     if (!props?.isTestResource) {
-      new ssm.StringParameter(this, 'CustomerTableNameSsmParameter', {
+      new StringParameter(this, 'CustomerTableNameSsmParameter', {
         parameterName: CustomerTable.TABLE_NAME_SSM_PARAMETER,
         stringValue: this.table.tableName,
         description: 'The name of the Customer table',
-        type: ssm.ParameterType.STRING,
-        tier: ssm.ParameterTier.STANDARD,
+        type: ParameterType.STRING,
+        tier: ParameterTier.STANDARD,
       });
     }
   }
