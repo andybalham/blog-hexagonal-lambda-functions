@@ -10,9 +10,12 @@
     "build": "npm run lint && tsc",
     "test": "mocha --require ts-node/register test/**/*.ts",
     "test-coverage": "nyc npm run test",
-    "cdk-synth-test": "tsc && cdk synth TestStack > .cdk-synth.yml",
-    "cdk-deploy-test": "tsc && cdk deploy TestStack --hotswap",
-    "cdk-destroy-test": "tsc && cdk destroy TestStack",
+    "cdk-synth-data-access-test": "tsc && cdk synth DataAccessTestStack > .cdk-synth.yml",
+    "cdk-deploy-data-access-test": "tsc && cdk deploy DataAccessTestStack --hotswap",
+    "cdk-destroy-data-access-test": "tsc && cdk destroy DataAccessTestStack",
+    "cdk-synth-function-test": "tsc && cdk synth FunctionTestStack > .cdk-synth.yml",
+    "cdk-deploy-function-test": "tsc && cdk deploy FunctionTestStack --hotswap",
+    "cdk-destroy-function-test": "tsc && cdk destroy FunctionTestStack",
     "cdk-synth-application": "tsc && cdk synth ApplicationStack > .cdk-synth.yml",
     "cdk-deploy-application": "tsc && cdk deploy ApplicationStack",
     "cdk-hotswap-application": "tsc && cdk deploy ApplicationStack --hotswap",
@@ -58,6 +61,7 @@
   "dependencies": {
     "@andybalham/cdk-cloud-test-kit": "^1.0.3",
     "aws-cdk-lib": "^2.24.1",
-    "constructs": "^10.1.10"
+    "constructs": "^10.1.10",
+    "nanoid": "^3.3.4"
   }
 }

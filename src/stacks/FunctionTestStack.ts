@@ -9,9 +9,9 @@ import { AccountDetailTable, CustomerTable } from '../data-storage';
 
 export type TestStackProps = StackProps;
 
-export default class TestStack extends IntegrationTestStack {
+export default class FunctionTestStack extends IntegrationTestStack {
   //
-  static readonly Id = 'TestStack';
+  static readonly Id = 'FunctionTestStack';
 
   static readonly CustomerUpdatedTopicId = 'CustomerUpdatedTopic';
 
@@ -21,22 +21,22 @@ export default class TestStack extends IntegrationTestStack {
 
   constructor(scope: Construct, id: string, props?: TestStackProps) {
     super(scope, id, {
-      testStackId: TestStack.Id,
+      testStackId: FunctionTestStack.Id,
       ...props,
     });
 
     const customerUpdatedTopic = new Topic(this, 'CustomerUpdatedTopic');
-    this.addTestResourceTag(customerUpdatedTopic, TestStack.CustomerUpdatedTopicId);
+    this.addTestResourceTag(customerUpdatedTopic, FunctionTestStack.CustomerUpdatedTopicId);
 
     const customerTable = new CustomerTable(this, 'CustomerTable', {
       isTestResource: true,
     });
-    this.addTestResourceTag(customerTable.table, TestStack.CustomerTableId);
+    this.addTestResourceTag(customerTable.table, FunctionTestStack.CustomerTableId);
 
     const accountDetailTable = new AccountDetailTable(this, 'AccountDetailTable', {
       isTestResource: true,
     });
-    this.addTestResourceTag(accountDetailTable.table, TestStack.AccountDetailTableId);
+    this.addTestResourceTag(accountDetailTable.table, FunctionTestStack.AccountDetailTableId);
 
     new CustomerUpdatedHandler(this, 'CustomerUpdatedHandler', {
       customerUpdatedTopic,
