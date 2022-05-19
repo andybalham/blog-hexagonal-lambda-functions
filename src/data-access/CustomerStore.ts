@@ -19,6 +19,16 @@ const documentClient = new DocumentClient({
 export default class CustomerStore implements ICustomerStore {
   constructor(private tableName?: string) {}
 
+  async upsertCustomerAsync(customer: Customer): Promise<void> {
+    //
+    if (this.tableName === undefined) throw new Error('this.tableName === undefined');
+
+    await documentClient.put({
+      TableName: this.tableName,
+      Item: customer,
+    }).promise();
+  }
+
   async retrieveCustomerAsync(customerId: string): Promise<Customer | undefined> {
     //
     if (this.tableName === undefined) throw new Error('this.tableName === undefined');

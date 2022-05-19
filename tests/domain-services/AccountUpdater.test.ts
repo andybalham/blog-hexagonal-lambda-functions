@@ -27,11 +27,12 @@ describe('AccountUpdater Test Suite', () => {
   beforeEach(() => {
     customerStoreMock = {
       retrieveCustomerAsync: jest.fn(),
+      upsertCustomerAsync: jest.fn(),
     };
 
     accountDetailStoreMock = {
       listAccountDetailsByCustomerIdAsync: jest.fn(),
-      updateAccountDetailAsync: jest.fn(),
+      upsertAccountDetailAsync: jest.fn(),
     };
   });
 
@@ -59,7 +60,7 @@ describe('AccountUpdater Test Suite', () => {
       testCustomerId
     );
 
-    expect(accountDetailStoreMock.updateAccountDetailAsync).toBeCalledTimes(0);
+    expect(accountDetailStoreMock.upsertAccountDetailAsync).toBeCalledTimes(0);
   });
 
   it('handles single account no billing update requested', async () => {
@@ -85,7 +86,7 @@ describe('AccountUpdater Test Suite', () => {
       .mockResolvedValue([accountDetail]);
 
     const updateAccountDetailMock = jest.fn();
-    accountDetailStoreMock.updateAccountDetailAsync = updateAccountDetailMock;
+    accountDetailStoreMock.upsertAccountDetailAsync = updateAccountDetailMock;
 
     const accountUpdaterFunction = new AccountUpdater(customerStoreMock, accountDetailStoreMock);
 
@@ -104,7 +105,7 @@ describe('AccountUpdater Test Suite', () => {
       testCustomerId
     );
 
-    expect(accountDetailStoreMock.updateAccountDetailAsync).toBeCalledTimes(1);
+    expect(accountDetailStoreMock.upsertAccountDetailAsync).toBeCalledTimes(1);
 
     const { calls: updateAccountDetailCalls } = updateAccountDetailMock.mock;
     const actualUpdatedAccountDetail = updateAccountDetailCalls[0][0];

@@ -37,7 +37,7 @@ export default class AccountDetailStore implements IAccountDetailStore {
     return (scanResult.Items || []).map((i) => i as AccountDetail);
   }
 
-  async updateAccountDetailAsync(accountDetail: AccountDetail): Promise<void> {
+  async upsertAccountDetailAsync(accountDetail: AccountDetail): Promise<void> {
     //
     if (this.tableName === undefined) throw new Error('this.tableName === undefined');
 

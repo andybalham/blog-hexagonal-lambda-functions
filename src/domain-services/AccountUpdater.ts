@@ -30,7 +30,7 @@ export default class AccountUpdater {
         updatedAccountDetail.billingAddress = customer.address;
       }
 
-      return this.accountDetailsStore.updateAccountDetailAsync(updatedAccountDetail);
+      return this.accountDetailsStore.upsertAccountDetailAsync(updatedAccountDetail);
     });
 
     const updateAccountDetailResults = await Promise.allSettled(updateAccountDetailPromises);

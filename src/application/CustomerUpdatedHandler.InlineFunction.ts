@@ -41,7 +41,7 @@ async function listAccountDetailsByCustomerIdAsync(customerId: string): Promise<
   return (scanResult.Items || []).map((i) => i as AccountDetail);
 }
 
-async function updateAccountDetailAsync(accountDetail: AccountDetail): Promise<void> {
+async function upsertAccountDetailAsync(accountDetail: AccountDetail): Promise<void> {
   //
   if (accountDetailTableName === undefined) throw new Error('accountDetailTableName === undefined');
 
@@ -84,7 +84,7 @@ async function updateAccountsAsync(event: CustomerUpdatedEvent): Promise<void> {
       updatedAccountDetail.billingAddress = customer.address;
     }
 
-    return updateAccountDetailAsync(updatedAccountDetail);
+    return upsertAccountDetailAsync(updatedAccountDetail);
   });
 
   const updateAccountDetailResults = await Promise.allSettled(updateAccountDetailPromises);

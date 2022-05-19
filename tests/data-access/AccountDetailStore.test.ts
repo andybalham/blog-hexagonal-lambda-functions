@@ -28,7 +28,7 @@ describe('AccountDetailStore Test Suite', () => {
 
     const customerId = nanoid();
 
-    await accountDetailStore.updateAccountDetailAsync({
+    await accountDetailStore.upsertAccountDetailAsync({
       accountDetailId: nanoid(),
       customerId,
       billingAddress: {
@@ -41,7 +41,7 @@ describe('AccountDetailStore Test Suite', () => {
       },
     });
 
-    await accountDetailStore.updateAccountDetailAsync({
+    await accountDetailStore.upsertAccountDetailAsync({
       accountDetailId: nanoid(),
       customerId,
       billingAddress: {
