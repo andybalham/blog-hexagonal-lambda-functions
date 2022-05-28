@@ -6,7 +6,11 @@
 import { SNSEvent } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import https from 'https';
-import { AccountDetail, Customer, CustomerUpdatedEvent } from '../domain-contracts';
+import {
+  AccountDetail,
+  Customer,
+  CustomerUpdatedEvent,
+} from '../domain-contracts';
 
 const agent = new https.Agent({
   keepAlive: true,
@@ -24,9 +28,12 @@ export const ENV_VAR_ACCOUNT_DETAIL_TABLE_NAME = 'ACCOUNT_DETAIL_TABLE_NAME';
 const customerTableName = process.env[ENV_VAR_CUSTOMER_TABLE_NAME];
 const accountDetailTableName = process.env[ENV_VAR_ACCOUNT_DETAIL_TABLE_NAME];
 
-async function listAccountDetailsByCustomerIdAsync(customerId: string): Promise<AccountDetail[]> {
+async function listAccountDetailsByCustomerIdAsync(
+  customerId: string
+): Promise<AccountDetail[]> {
   //
-  if (accountDetailTableName === undefined) throw new Error('accountDetailTableName === undefined');
+  if (accountDetailTableName === undefined)
+    throw new Error('accountDetailTableName === undefined');
 
   const scanResult = await documentClient
     .scan({
@@ -41,9 +48,12 @@ async function listAccountDetailsByCustomerIdAsync(customerId: string): Promise<
   return (scanResult.Items || []).map((i) => i as AccountDetail);
 }
 
-async function upsertAccountDetailAsync(accountDetail: AccountDetail): Promise<void> {
+async function upsertAccountDetailAsync(
+  accountDetail: AccountDetail
+): Promise<void> {
   //
-  if (accountDetailTableName === undefined) throw new Error('accountDetailTableName === undefined');
+  if (accountDetailTableName === undefined)
+    throw new Error('accountDetailTableName === undefined');
 
   await documentClient
     .put({
@@ -53,15 +63,20 @@ async function upsertAccountDetailAsync(accountDetail: AccountDetail): Promise<v
     .promise();
 }
 
-async function retrieveCustomerAsync(customerId: string): Promise<Customer | undefined> {
+async function retrieveCustomerAsync(
+  customerId: string
+): Promise<Customer | undefined> {
   //
-  if (customerTableName === undefined) throw new Error('this.customerTableName === undefined');
+  if (customerTableName === undefined)
+    throw new Error('this.customerTableName === undefined');
 
   const getItemInput = { TableName: customerTableName, Key: { customerId } };
 
   const getItemOutput = await documentClient.get(getItemInput).promise();
 
-  return getItemOutput.Item === undefined ? undefined : (getItemOutput.Item as Customer);
+  return getItemOutput.Item === undefined
+    ? undefined
+    : (getItemOutput.Item as Customer);
 }
 
 async function updateAccountsAsync(event: CustomerUpdatedEvent): Promise<void> {
@@ -69,16 +84,23 @@ async function updateAccountsAsync(event: CustomerUpdatedEvent): Promise<void> {
   const customer = await retrieveCustomerAsync(event.customerId);
 
   if (!customer) {
-    const errorMessage = `No customer found for event: ${JSON.stringify(event)}`;
+    const errorMessage = `No customer found for event: ${JSON.stringify(
+      event
+    )}`;
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
 
-  const accountDetails = await listAccountDetailsByCustomerIdAsync(event.customerId);
+  const accountDetails = await listAccountDetailsByCustomerIdAsync(
+    event.customerId
+  );
 
   const updateAccountDetailPromises = accountDetails.map((ad) => {
     //
-    const updatedAccountDetail = { ...ad, correspondenceAddress: customer.address };
+    const updatedAccountDetail = {
+      ...ad,
+      correspondenceAddress: customer.address,
+    };
 
     if (event.billingUpdateRequested) {
       updatedAccountDetail.billingAddress = customer.address;
@@ -87,17 +109,17 @@ async function updateAccountsAsync(event: CustomerUpdatedEvent): Promise<void> {
     return upsertAccountDetailAsync(updatedAccountDetail);
   });
 
-  const updateAccountDetailResults = await Promise.allSettled(updateAccountDetailPromises);
+  const updateAccountDetailResults = await Promise.allSettled(
+    updateAccountDetailPromises
+  );
 
   const rejectedReasons = updateAccountDetailResults
     .filter((r) => r.status === 'rejected')
-    .map((r) => (r as PromiseRejectedResult).reason);
+    .map((r) => (r as PromiseRejectedResult).reason as string);
 
   if (rejectedReasons.length > 0) {
     throw new Error(
-      `One or more account detail updates were not processed successfully: ${JSON.stringify({
-        rejectedReasons,
-      })}`
+      `One or more updates were not processed: ${rejectedReasons.join(', ')}`
     );
   }
 }
@@ -105,21 +127,23 @@ async function updateAccountsAsync(event: CustomerUpdatedEvent): Promise<void> {
 export const handler = async (event: SNSEvent): Promise<void> => {
   //
   const accountUpdaterFunctionPromises = event.Records.map((r) => {
-    const customerUpdatedEvent = JSON.parse(r.Sns.Message) as CustomerUpdatedEvent;
+    const customerUpdatedEvent = JSON.parse(
+      r.Sns.Message
+    ) as CustomerUpdatedEvent;
     return updateAccountsAsync(customerUpdatedEvent);
   });
 
-  const accountUpdaterFunctionResults = await Promise.allSettled(accountUpdaterFunctionPromises);
+  const accountUpdaterFunctionResults = await Promise.allSettled(
+    accountUpdaterFunctionPromises
+  );
 
   const rejectedReasons = accountUpdaterFunctionResults
     .filter((r) => r.status === 'rejected')
-    .map((r) => (r as PromiseRejectedResult).reason);
+    .map((r) => (r as PromiseRejectedResult).reason as string);
 
   if (rejectedReasons.length > 0) {
     throw new Error(
-      `One or more records were not successfully processed: ${JSON.stringify({
-        rejectedReasons,
-      })}`
+      `One or more updates were not processed: ${rejectedReasons.join(', ')}`
     );
   }
 };

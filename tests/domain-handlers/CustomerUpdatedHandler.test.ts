@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable import/extensions, import/no-absolute-path */
-import AccountUpdater from '../../src/domain-services/AccountUpdater';
+import CustomerUpdatedHandler from '../../src/domain-handlers/CustomerUpdatedHandler';
 import {
   Customer,
   ICustomerStore,
@@ -8,7 +8,7 @@ import {
   AccountDetail,
 } from '../../src/domain-contracts';
 
-describe('AccountUpdater Test Suite', () => {
+describe('CustomerUpdatedHandler Test Suite', () => {
   //
   let customerStoreMock: ICustomerStore;
   let accountDetailStoreMock: IAccountDetailStore;
@@ -40,25 +40,34 @@ describe('AccountUpdater Test Suite', () => {
     //
     // Arrange
 
-    customerStoreMock.retrieveCustomerAsync = jest.fn().mockResolvedValue(testCustomer);
-    accountDetailStoreMock.listAccountDetailsByCustomerIdAsync = jest.fn().mockResolvedValue([]);
+    customerStoreMock.retrieveCustomerAsync = jest
+      .fn()
+      .mockResolvedValue(testCustomer);
+    accountDetailStoreMock.listAccountDetailsByCustomerIdAsync = jest
+      .fn()
+      .mockResolvedValue([]);
 
-    const accountUpdaterFunction = new AccountUpdater(customerStoreMock, accountDetailStoreMock);
+    const accountUpdaterFunction = new CustomerUpdatedHandler(
+      customerStoreMock,
+      accountDetailStoreMock
+    );
 
     // Act
 
-    await accountUpdaterFunction.updateAccountsAsync({
+    await accountUpdaterFunction.handleAsync({
       customerId: testCustomerId,
       billingUpdateRequested: false,
     });
 
     // Assert
 
-    expect(customerStoreMock.retrieveCustomerAsync).toBeCalledWith(testCustomerId);
-
-    expect(accountDetailStoreMock.listAccountDetailsByCustomerIdAsync).toBeCalledWith(
+    expect(customerStoreMock.retrieveCustomerAsync).toBeCalledWith(
       testCustomerId
     );
+
+    expect(
+      accountDetailStoreMock.listAccountDetailsByCustomerIdAsync
+    ).toBeCalledWith(testCustomerId);
 
     expect(accountDetailStoreMock.upsertAccountDetailAsync).toBeCalledTimes(0);
   });
@@ -80,7 +89,9 @@ describe('AccountUpdater Test Suite', () => {
       },
     };
 
-    customerStoreMock.retrieveCustomerAsync = jest.fn().mockResolvedValue(testCustomer);
+    customerStoreMock.retrieveCustomerAsync = jest
+      .fn()
+      .mockResolvedValue(testCustomer);
     accountDetailStoreMock.listAccountDetailsByCustomerIdAsync = jest
       .fn()
       .mockResolvedValue([accountDetail]);
@@ -88,29 +99,38 @@ describe('AccountUpdater Test Suite', () => {
     const updateAccountDetailMock = jest.fn();
     accountDetailStoreMock.upsertAccountDetailAsync = updateAccountDetailMock;
 
-    const accountUpdaterFunction = new AccountUpdater(customerStoreMock, accountDetailStoreMock);
+    const accountUpdaterFunction = new CustomerUpdatedHandler(
+      customerStoreMock,
+      accountDetailStoreMock
+    );
 
     // Act
 
-    await accountUpdaterFunction.updateAccountsAsync({
+    await accountUpdaterFunction.handleAsync({
       customerId: testCustomerId,
       billingUpdateRequested: false,
     });
 
     // Assert
 
-    expect(customerStoreMock.retrieveCustomerAsync).toBeCalledWith(testCustomerId);
-
-    expect(accountDetailStoreMock.listAccountDetailsByCustomerIdAsync).toBeCalledWith(
+    expect(customerStoreMock.retrieveCustomerAsync).toBeCalledWith(
       testCustomerId
     );
+
+    expect(
+      accountDetailStoreMock.listAccountDetailsByCustomerIdAsync
+    ).toBeCalledWith(testCustomerId);
 
     expect(accountDetailStoreMock.upsertAccountDetailAsync).toBeCalledTimes(1);
 
     const { calls: updateAccountDetailCalls } = updateAccountDetailMock.mock;
     const actualUpdatedAccountDetail = updateAccountDetailCalls[0][0];
 
-    expect(actualUpdatedAccountDetail.correspondenceAddress).toEqual(testCustomer.address);
-    expect(actualUpdatedAccountDetail.billingAddress).toEqual(accountDetail.billingAddress);
+    expect(actualUpdatedAccountDetail.correspondenceAddress).toEqual(
+      testCustomer.address
+    );
+    expect(actualUpdatedAccountDetail.billingAddress).toEqual(
+      accountDetail.billingAddress
+    );
   });
 });
