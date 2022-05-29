@@ -1,15 +1,15 @@
-export interface Address {
-  lines: string[];
-  postalCode: string;
+export class Address {
+  readonly lines: string[];
+  readonly postalCode: string;
 }
 
-export interface Customer {
+export class Customer {
   customerId: string;
   name: string;
   address: Address;
 }
 
-export interface AccountDetail {
+export class AccountDetail {
   accountDetailId: string;
   customerId: string;
   correspondenceAddress: Address;

@@ -1,4 +1,4 @@
-export interface CustomerUpdatedEvent {
+export class CustomerUpdatedEvent {
   customerId: string;
   billingUpdateRequested: boolean;
 }

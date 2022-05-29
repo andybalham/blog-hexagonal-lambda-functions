@@ -8,7 +8,7 @@
     "lint": "eslint ./src --ext .ts",
     "lint-and-fix": "eslint ./src --ext .ts --fix",
     "build": "npm run lint && tsc",
-    "test-domain": "jest tests/domain-services --testPathIgnorePatterns=dist",
+    "test-domain": "jest tests/domain-handlers --testPathIgnorePatterns=dist",
     "cdk-synth-data-access-test": "cdk synth DataAccessTestStack > .cdk-synth.yml",
     "cdk-deploy-data-access-test": "cdk deploy DataAccessTestStack --hotswap",
     "cdk-destroy-data-access-test": "cdk destroy DataAccessTestStack",
