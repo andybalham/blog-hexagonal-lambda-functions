@@ -21,6 +21,7 @@
     "cdk-destroy-application": "cdk destroy ApplicationStack",
     "cdk-synth-data-storage": "cdk synth DataStorageStack > .cdk-synth.yml",
     "cdk-deploy-data-storage": "cdk deploy DataStorageStack",
+    "cdk-deploy-all": "cdk deploy DataStorageStack && cdk deploy ApplicationStack",
     "cdk-synth": "cdk synth",
     "cdk-destroy-all": "cdk destroy --all"
   },
